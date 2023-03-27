@@ -1,5 +1,5 @@
 import css from './App.module.css';
-import { Statistic } from './Statistic/Statistic';
+import Statistic from '../components/Statistic/Statistic';
 
 export const App = () => {
   return (

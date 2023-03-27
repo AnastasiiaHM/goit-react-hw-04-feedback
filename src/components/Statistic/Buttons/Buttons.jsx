@@ -4,8 +4,9 @@ export const Buttons = ({ nameBtn, handleClick }) => {
   return (
     <button
       type="button"
+      name={nameBtn}
       className={css.statistic__btn}
-      onClick={() => handleClick(nameBtn)}
+      onClick={handleClick}
     >
       {nameBtn}
     </button>

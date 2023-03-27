@@ -1,83 +1,65 @@
-import { Component } from 'react';
+import { useState } from 'react';
 import { Buttons } from './Buttons/Buttons';
 import { Total } from './Total/Total';
 import { Section } from './Section/Section';
 import { Notification } from './Notification/Notification';
 import css from '../Statistic/Statistic.module.css';
 
-export class Statistic extends Component {
-  state = {
-    good: 0,
-    neutral: 0,
-    bad: 0,
-  };
+export default function Statistic() {
+  const [good, setGood] = useState(0);
+  const [bad, setBad] = useState(0);
+  const [neutral, setNeutral] = useState(0);
 
-  handleClickBtn = nameBtn => {
-    this.setState(prevState => {
-      return {
-        [nameBtn]: prevState[nameBtn] + 1,
-      };
-    });
-  };
+  const d = { good, bad, neutral };
 
-  countTotalFeedback = () => {
-    const values = Object.values(this.state);
-    return values.reduce((acc, value) => {
-      return acc + value;
-    }, 0);
-  };
+  const nameBtns = Object.keys(d);
 
-  countPositiveFeedback = () => {
-    if (this.state.good) {
-      return ((this.state.good / this.countTotalFeedback()) * 100).toFixed(2);
-    } else {
-      return '0';
+  const valuesBtn = Object.values(d);
+
+  const total = good + bad + neutral;
+  const positive = ((good / total) * 100).toFixed(2);
+  const negativ = ((bad / total) * 100).toFixed(2);
+
+  const handleClickBtn = event => {
+    const nameBtn = event.target.name;
+
+    switch (nameBtn) {
+      case 'good':
+        setGood(prev => prev + 1);
+        break;
+      case 'bad':
+        setBad(prev => prev + 1);
+        break;
+      case 'neutral':
+        setNeutral(prev => prev + 1);
+        break;
+      default:
+        return;
     }
   };
 
-  countNegativeFeedback = () => {
-    if (this.state.bad) {
-      return ((this.state.bad / this.countTotalFeedback()) * 100).toFixed(2);
-    } else {
-      return '0';
-    }
-  };
-
-  render() {
-    const nameBtns = Object.keys(this.state);
-    const valuesBtn = Object.values(this.state);
-
-    return (
-      <div className={css.statistic__wraper}>
-        <Section title="Please leave feedback">
-          {valuesBtn.map((value, index) => (
-            <span className={css.statistic_number} key={index}>
-              {value}
-            </span>
+  return (
+    <div className={css.statistic__wraper}>
+      <Section title="Please leave feedback">
+        {valuesBtn.map((value, index) => (
+          <span className={css.statistic_number} key={index}>
+            {value}
+          </span>
+        ))}
+        <div className={css.btnWraper}>
+          {nameBtns.map(btn => (
+            <Buttons nameBtn={btn} handleClick={handleClickBtn} key={btn} />
           ))}
-          <div className={css.btnWraper}>
-            {nameBtns.map(btn => (
-              <Buttons
-                nameBtn={btn}
-                handleClick={this.handleClickBtn}
-                key={btn}
-              />
-            ))}
-          </div>
-          <h3 className={css.statistic__totalTitle}>Statistick</h3>
-          <div className={css.statistic__totalWraper}>
-            {this.countTotalFeedback() !== 0 ? (
-              <Total
-                total={this.countTotalFeedback()}
-                positiv={this.countPositiveFeedback()}
-                negativ={this.countNegativeFeedback()}
-              />
-            ) : (
-              <Notification message="There is no feedback" />
-            )}
-          </div>
-        </Section>
-      </div>
-    );
-  }
+        </div>
+        <h3 className={css.statistic__totalTitle}>Statistick</h3>
+        <div className={css.statistic__totalWraper}>
+          {total !== 0 ? (
+            <Total total={total} positiv={positive} negativ={negativ} />
+          ) : (
+            <Notification message="There is no feedback" />
+          )}
+        </div>
+      </Section>
+    </div>
+  );
 }
